@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour {
 	public static float money = 20;
-	private float drugBaseCost = 300;
+	private float drugBaseCost = 10;
 	public float multiplier = 1.2f;
 	// Use this for initialization
 	public Rigidbody2D body;
@@ -13,13 +14,13 @@ public class PlayerScript : MonoBehaviour {
 	public float expandedRadius;
 	public CircleCollider2D DetectRange;
 	//Animation Code:
-	public Sprite[] frames; 
 	public GameObject drug;
-	public float framesPerSecond = 10.0f;
 
 	private SpriteRenderer rend;
 	public TextMesh text;
 
+	public GameObject[] sellers;
+	public static float timeRemaining = 60;
 	void droppedDrugs(){
 		DetectRange.radius = 0;
 		DetectRange.enabled = false;
@@ -37,15 +38,15 @@ public class PlayerScript : MonoBehaviour {
 
 		DetectRange = GetComponent<CircleCollider2D> ();
 		body = GetComponent<Rigidbody2D> ();
+
+		sellers = GameObject.FindGameObjectsWithTag("Seller");
+
+		DetectRange.radius = 0;
+		DetectRange.enabled = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
-		int index = Convert.ToInt32(Time.time * framesPerSecond); 
-		index = index % frames.Length; 
-		rend.sprite = frames[index]; 
-
 		body.velocity = new Vector2(Input.GetAxis("Horizontal") * spd, Input.GetAxis("Vertical") * spd);
 		if (Input.GetKeyDown(KeyCode.Q) && drug != null) {
 			droppedDrugs ();
@@ -54,7 +55,12 @@ public class PlayerScript : MonoBehaviour {
 		//deal with money
 		text.text = "$" + String.Format("{0:0.00}", money);
 		if(money < 0) {
-			throw new NullReferenceException("where da cash");
+			GAME_OVER();
+		}
+		timeRemaining -= Time.deltaTime;
+		text.text += "\n (" + String.Format("{0:0.00}", timeRemaining) + ") to go";
+		if(timeRemaining < 0) {
+			GAME_OVER();
 		}
 	}
 
@@ -67,8 +73,21 @@ public class PlayerScript : MonoBehaviour {
 			drug = collision.gameObject;
 			DetectRange.radius = expandedRadius;
 			DetectRange.enabled = true;
-			money += drugBaseCost;
-			drugBaseCost *= multiplier;
+		} 
+		else if (collision.tag == "Buyer") {
+			if (drug != null) {
+				money += drugBaseCost;
+				drugBaseCost *= multiplier;
+				DetectRange.radius = 0;
+				DetectRange.enabled = false;
+
+				drug.gameObject.transform.parent = null;
+				drug.transform.position = (Vector2)sellers[(int)(UnityEngine.Random.value * sellers.Length)].transform.position;
+				drug = null;
+			}
 		}
+	}
+	public static void GAME_OVER() {
+		SceneManager.LoadScene("GameEnd");
 	}
 }

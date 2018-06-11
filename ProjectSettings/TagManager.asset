@@ -9,6 +9,8 @@ TagManager:
   - Drugs
   - Marshal
   - Cop
+  - Buyer
+  - Seller
   layers:
   - Default
   - TransparentFX

@@ -23,7 +23,7 @@ public class MarshalScript : NPCScript {
 			if (Time.time > countdownStart + countdown) {
 				alertCollider.radius = expandedRadius;
 				text.text = "Game Over";
-				throw new NullReferenceException("ur in jail");
+				PlayerScript.GAME_OVER();
 			}
 			else {
 				text.text = "? " + String.Format("{0:0.00}", countdownStart + countdown - Time.time);

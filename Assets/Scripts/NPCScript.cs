@@ -31,7 +31,7 @@ public class NPCScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void FixedUpdate () {
-		if(Vector2.Distance(transform.position, moveTo) < 1) {
+		if(Vector2.Distance(transform.position, moveTo) < 2) {
 			//arrived at position, goto next position
 			selectPoint();
 		}
@@ -57,7 +57,7 @@ public class NPCScript : MonoBehaviour {
 				}
 				else if(forwardBlock) {
 					Debug.Log("obstacle avoided");
-					currentMotion = currentMotion.Rotate(60);
+					currentMotion = Random.value < 0.5 ? currentMotion.Rotate(60) : currentMotion.Rotate(-60);
 					onPath = false;
 				}
 			}
@@ -77,7 +77,7 @@ public class NPCScript : MonoBehaviour {
 	public virtual void OnUninterest() { }
 
 	public void OnTriggerEnter2D(Collider2D collider) {
-		if(collider.tag == "Drugs") {
+		if(collider.tag == "Drugs" || collider.tag == "Buyer" || collider.tag == "Seller") {
 			return;
 		}
 		//hit = Physics2D.Raycast(transform.position, collider.transform.position - transform.position);
@@ -87,7 +87,11 @@ public class NPCScript : MonoBehaviour {
 		//		OnInterest();
 		//	}
 		//}
-		OnInterest();
+		if(!partOf.Contains(collider)) {
+			Debug.Log(collider.name);
+			OnInterest();
+			partOf.Add(collider);
+		}
 	}
 	public void OnTriggerExit2D(Collider2D collider) {
 		//hit = Physics2D.Raycast(transform.position, collider.transform.position - transform.position);
@@ -97,9 +101,13 @@ public class NPCScript : MonoBehaviour {
 		//		OnUninterest();
 		//	}
 		//}
-		if(collider.tag == "Drugs") {
+		if(collider.tag == "Drugs" || collider.tag == "Buyer" || collider.tag == "Seller") {
 			return;
 		}
-		OnUninterest();
+		if (partOf.Contains(collider)) {
+			Debug.Log(collider.name);
+			OnUninterest();
+			partOf.Remove(collider);
+		}
 	}
 }
