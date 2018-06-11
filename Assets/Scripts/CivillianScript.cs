@@ -10,7 +10,9 @@ public class CivillianScript : NPCScript {
 	public TextMesh text;
 	private float countdownStart;
 	public bool counting = false;
+	private float startSpeed;
 	public override void Start() {
+		startSpeed = base.speed;
 		base.Start();
 		tag = "Civilian";
 		alertCollider = GetComponent<CircleCollider2D>();
@@ -34,10 +36,12 @@ public class CivillianScript : NPCScript {
 		counting = true;
 		countdownStart = Time.time;
 		speed = 0;
+		alertCollider.enabled = true;
 	}
 	public override void OnUninterest() {
 		counting = false;
 		alertCollider.radius = 0;
-		speed = 3;
+		alertCollider.enabled = false;
+		speed = startSpeed;
 	}
 }

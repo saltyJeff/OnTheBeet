@@ -7,6 +7,8 @@ TagManager:
   - WAYPOINT
   - Civilian
   - Drugs
+  - Marshal
+  - Cop
   layers:
   - Default
   - TransparentFX

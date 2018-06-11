@@ -77,21 +77,29 @@ public class NPCScript : MonoBehaviour {
 	public virtual void OnUninterest() { }
 
 	public void OnTriggerEnter2D(Collider2D collider) {
-		hit = Physics2D.Raycast(transform.position, collider.transform.position - transform.position);
-		if((!hit || hit.collider.tag == "Civilian" || hit.collider.tag == "Player") && !partOf.Contains(collider)) {
-			partOf.Add(collider);
-			if(partOf.Count == 1) {
-				OnInterest();
-			}
+		if(collider.tag == "Drugs") {
+			return;
 		}
+		//hit = Physics2D.Raycast(transform.position, collider.transform.position - transform.position);
+		//if((!hit || hit.collider.gameObject == collider.gameObject) && !partOf.Contains(collider)) {
+		//	partOf.Add(collider);
+		//	if(partOf.Count == 1) {
+		//		OnInterest();
+		//	}
+		//}
+		OnInterest();
 	}
 	public void OnTriggerExit2D(Collider2D collider) {
-		hit = Physics2D.Raycast(transform.position, collider.transform.position - transform.position);
-		if ((!hit || hit.collider.tag == "Civilian" || hit.collider.tag == "Player") && partOf.Contains(collider)) {
-			partOf.Remove(collider);
-			if(partOf.Count == 0) {
-				OnUninterest();
-			}
+		//hit = Physics2D.Raycast(transform.position, collider.transform.position - transform.position);
+		//if ((!hit || hit.collider.tag == "Player") && partOf.Contains(collider)) {
+		//	partOf.Remove(collider);
+		//	if(partOf.Count == 0) {
+		//		OnUninterest();
+		//	}
+		//}
+		if(collider.tag == "Drugs") {
+			return;
 		}
+		OnUninterest();
 	}
 }
